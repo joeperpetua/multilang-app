@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MultiLang</string>
+    <string name="main_input">Write anything here...</string>
+    <string name="translate_button">Translate</string>
+    <string name="translations_header">Target languages:</string>
+    <string name="english_indicator">EN</string>
+    <string name="spanish_indicator">ES</string>
+    <string name="french_indicator">FR</string>
+    <string name="german_indicator">DE</string>
+</resources>
