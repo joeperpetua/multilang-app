@@ -30,7 +30,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 
@@ -164,26 +166,45 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void translate(String target, String text, Integer id){
+    public void translate(ArrayList<String[]> target, String text){
+
+        //Log.i("TAG", "translate: ----" + langs);
+        String tl = "";
+        for (int i = 0; i < target.size(); i++) {
+            // concatenate tl by a comma, except for the last element
+            if (i == target.size() - 1){
+                tl += target.get(i)[0];
+            }else {
+                tl += target.get(i)[0] + ",";
+            }
+        }
+
+        //AndroidNetworking.get(url)
         AndroidNetworking.get("https://apiml.joeper.myds.me/translate")
-                .addQueryParameter("tl", target)
+                .addQueryParameter("tl", tl)
                 .addQueryParameter("q", text)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        JSONArray results;
                         try {
-                            TextView transField = (TextView) findViewById(id);
-                            transField.setText(response.getString("result"));
-                            Log.i("TAG", "onResponse: " + response.getString("result"));
+                            results = response.getJSONArray("translations");
+                            // Log.i("TAG", "onResponse: " + results);
+
+                            for (int i = 0; i < results.length(); i++) {
+                                JSONObject tmp = results.getJSONObject(i);
+                                TextView transField = (TextView) findViewById(Integer.parseInt(target.get(i)[1]));
+                                transField.setText(tmp.getString("result"));
+                            }
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                     @Override
                     public void onError(ANError error) {
-                        Log.e("Api get error", "onError: ", error);
+                        Log.e("Api get error", "onError: " + error.getErrorBody() + "\n" + error.getResponse());
                         Toast toast = Toast.makeText(getApplicationContext(), "API error: " + error, Toast.LENGTH_SHORT);
                         toast.show();
                         Exception exception = new Exception("Error occurred when translating");
@@ -208,9 +229,11 @@ public class MainActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(getApplicationContext(), "Translating...", Toast.LENGTH_SHORT);
             toast.show();
 
-            for (int i = 0; i < langs.size(); i++){
+            translate(langs, mainInputText);
+
+            /*for (int i = 0; i < langs.size(); i++){
                 if (i != langs.size() - 1){
-                    translate(langs.get(i)[0], mainInputText, Integer.parseInt(langs.get(i)[1]));
+
                 }else{
                     Handler handler = new Handler();
                     int finalI = i;
@@ -234,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                     }, 5000);   //3 seconds
                 }
 
-            }
+            }*/
         }
 
     }
