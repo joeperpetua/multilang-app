@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         AndroidNetworking.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
+
 
         // to parse:
         // language: langs.get(index)[0]
@@ -162,6 +164,16 @@ public class MainActivity extends AppCompatActivity {
             //Add to LinearLayout defined in XML
             lm.addView(ll);
             Log.i("TAG", "onCreate: added views for " + i);
+        }
+
+        CharSequence text = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
+        String text_formatted;
+        if (text != null){
+            text_formatted = text.toString();
+            Log.i("INTENT", "onCreate: intent text: " + text_formatted);
+            EditText mainInput = (EditText) findViewById(R.id.mainInput);
+            mainInput.setText(text_formatted);
+            translate(langs, text_formatted);
         }
 
     }
