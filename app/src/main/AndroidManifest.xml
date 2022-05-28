@@ -12,7 +12,8 @@
         android:theme="@style/Theme.MultiLang">
         <activity
             android:name=".MainActivity"
-            android:label="Translate with MultiLang">
+            android:label="Translate with MultiLang"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
