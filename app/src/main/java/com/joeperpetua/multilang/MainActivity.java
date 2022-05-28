@@ -14,6 +14,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public void handleIntent(){
+    public void handleIntent() throws ExecutionException, InterruptedException {
         CharSequence text = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
         String text_formatted;
         if (text != null){
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("INTENT", "onCreate: intent text: " + text_formatted);
             EditText mainInput = findViewById(R.id.mainInput);
             mainInput.setText(text_formatted);
+            runTranslation(mainInput);
             translate(langs, text_formatted);
         }
     }
@@ -61,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         AndroidNetworking.initialize(getApplicationContext());
         setContentView(R.layout.activity_main);
-
 
         // to parse:
         // language: langs.get(index)[0]
@@ -168,14 +168,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Log.i("TAG", "onCreate: running on create");
-        handleIntent();
+        try {
+            handleIntent();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.i("TAG", "onNewIntent: running new intent");
-        handleIntent();
+        try {
+            handleIntent();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void translate(ArrayList<String[]> target, String text){
@@ -229,25 +237,27 @@ public class MainActivity extends AppCompatActivity {
 
     public void fixLastItem(){
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                int last = langs.size() - 1;
-                Log.i("", "runTranslation: skipping last item");
-                TextView previousItem = findViewById(Integer.parseInt(langs.get(last - 1)[1]));
+        handler.postDelayed(() -> {
+            int last = langs.size() - 1;
+            Log.i("", "runTranslation: skipping last item");
+            TextView previousItem = findViewById(Integer.parseInt(langs.get(last - 1)[1]));
 
-                TextView lastItem = findViewById(Integer.parseInt("999999999"));
-                Log.i("", "runTranslation: last height === " + lastItem.getHeight());
-
-
-                LinearLayout.LayoutParams langFieldParamsLast = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (previousItem.getHeight() * 0.75) );
-                langFieldParamsLast.setMargins(16, 32, 16, 16);
-
-                lastItem.setLayoutParams(langFieldParamsLast);
+            TextView lastItem = findViewById(Integer.parseInt("999999999"));
+            Log.i("", "runTranslation: last height === " + lastItem.getHeight());
 
 
-                Log.i("", "runTranslation: last height added === " + lastItem.getHeight());
-            }
-        }, 1000);   //3 seconds
+            LinearLayout.LayoutParams langFieldParamsLast = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (previousItem.getHeight() * 0.75) );
+            langFieldParamsLast.setMargins(16, 32, 16, 16);
+
+            lastItem.setLayoutParams(langFieldParamsLast);
+
+
+            Log.i("", "runTranslation: last height added === " + lastItem.getHeight());
+
+            ProgressBar spinner;
+            spinner = findViewById(R.id.progressBar);
+            spinner.setVisibility(View.GONE);
+        }, 1000);   //1 seconds
     }
 
 
@@ -255,8 +265,11 @@ public class MainActivity extends AppCompatActivity {
         // get field to translate
         EditText mainInput = findViewById(R.id.mainInput);
         String mainInputText = mainInput.getText().toString();
+        ProgressBar spinner;
+        spinner = findViewById(R.id.progressBar);
 
         if(!mainInputText.isEmpty()){
+            spinner.setVisibility(View.VISIBLE);
             // run the translation and get result
             Log.i("", "runTranslation: call API");
 
