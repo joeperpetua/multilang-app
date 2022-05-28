@@ -1,19 +1,14 @@
 package com.joeperpetua.multilang;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -24,21 +19,18 @@ import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity {
-    public ArrayList<String[]> langs = new ArrayList<String[]>();
+    public ArrayList<String[]> langs = new ArrayList<>();
 
     public static void hideKeyboard(Activity activity) {
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -79,28 +71,24 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        EditText editText = (EditText) findViewById(R.id.mainInput);
-        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    try {
-                        runTranslation(v);
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    handled = true;
+        EditText editText = findViewById(R.id.mainInput);
+        editText.setOnEditorActionListener((view, actionId, event) -> {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_SEND) {
+                try {
+                    runTranslation(view);
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Log.e("TAG", "onCreate: ",e);
                 }
-                return handled;
+                handled = true;
             }
+            return handled;
         });
 
-        final ConstraintLayout cl = (ConstraintLayout) findViewById(R.id.constraintLayout);
-
-        final LinearLayout lm = (LinearLayout) findViewById(R.id.linearMain);
+        final LinearLayout lm = findViewById(R.id.linearMain);
         lm.setBaselineAligned(false);
 
         LinearLayout.LayoutParams langIndicatorParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -131,22 +119,22 @@ public class MainActivity extends AppCompatActivity {
             TextView langField = new TextView(this);
             langField.setGravity(Gravity.FILL);
 
-            Integer viewIDtoInteger = new Integer(0);
+            int viewIDtoInteger;
 
             if (i == langs.size() - 1){
                 // generate dynamic ID and store it in langs array
-                viewIDtoInteger = new Integer(999999999);
+                viewIDtoInteger = 999999999;
 
                 // langField.setBackgroundColor(Color.parseColor("#000000"));
             }else{
                 // generate dynamic ID and store it in langs array
-                viewIDtoInteger = new Integer(langField.generateViewId());
+                viewIDtoInteger = View.generateViewId();
 
 
             }
 
             // assign the id to the view
-            String viewIDtoString = viewIDtoInteger.toString();
+            String viewIDtoString = Integer.toString(viewIDtoInteger);
             String[] tempArray = {langs.get(i)[0], viewIDtoString};
             langs.set(i, tempArray);
             langField.setId(Integer.parseInt(langs.get(i)[1]));
@@ -171,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         if (text != null){
             text_formatted = text.toString();
             Log.i("INTENT", "onCreate: intent text: " + text_formatted);
-            EditText mainInput = (EditText) findViewById(R.id.mainInput);
+            EditText mainInput = findViewById(R.id.mainInput);
             mainInput.setText(text_formatted);
             translate(langs, text_formatted);
         }
@@ -181,19 +169,19 @@ public class MainActivity extends AppCompatActivity {
     public void translate(ArrayList<String[]> target, String text){
 
         //Log.i("TAG", "translate: ----" + langs);
-        String tl = "";
+        StringBuilder tl = new StringBuilder();
         for (int i = 0; i < target.size(); i++) {
             // concatenate tl by a comma, except for the last element
             if (i == target.size() - 1){
-                tl += target.get(i)[0];
+                tl.append(target.get(i)[0]);
             }else {
-                tl += target.get(i)[0] + ",";
+                tl.append(target.get(i)[0]).append(",");
             }
         }
 
         //AndroidNetworking.get(url)
         AndroidNetworking.get("https://apiml.joeper.myds.me/translate")
-                .addQueryParameter("tl", tl)
+                .addQueryParameter("tl", tl.toString())
                 .addQueryParameter("q", text)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -202,17 +190,19 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray results;
                         try {
                             results = response.getJSONArray("translations");
-                            // Log.i("TAG", "onResponse: " + results);
+                            Log.i("TAG", "onResponse: " + results);
 
                             for (int i = 0; i < results.length(); i++) {
                                 JSONObject tmp = results.getJSONObject(i);
-                                TextView transField = (TextView) findViewById(Integer.parseInt(target.get(i)[1]));
+                                TextView transField = findViewById(Integer.parseInt(target.get(i)[1]));
                                 transField.setText(tmp.getString("result"));
                             }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
+                        fixLastItem();
                     }
                     @Override
                     public void onError(ANError error) {
@@ -223,13 +213,35 @@ public class MainActivity extends AppCompatActivity {
                         exception.printStackTrace();
                     }
                 });
-        ;
+    }
+
+    public void fixLastItem(){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                int last = langs.size() - 1;
+                Log.i("", "runTranslation: skipping last item");
+                TextView previousItem = findViewById(Integer.parseInt(langs.get(last - 1)[1]));
+
+                TextView lastItem = findViewById(Integer.parseInt("999999999"));
+                Log.i("", "runTranslation: last height === " + lastItem.getHeight());
+
+
+                LinearLayout.LayoutParams langFieldParamsLast = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (previousItem.getHeight() * 0.75) );
+                langFieldParamsLast.setMargins(16, 32, 16, 16);
+
+                lastItem.setLayoutParams(langFieldParamsLast);
+
+
+                Log.i("", "runTranslation: last height added === " + lastItem.getHeight());
+            }
+        }, 1000);   //3 seconds
     }
 
 
     public void runTranslation(View view) throws ExecutionException, InterruptedException {
         // get field to translate
-        EditText mainInput = (EditText) findViewById(R.id.mainInput);
+        EditText mainInput = findViewById(R.id.mainInput);
         String mainInputText = mainInput.getText().toString();
 
         if(!mainInputText.isEmpty()){
@@ -243,33 +255,6 @@ public class MainActivity extends AppCompatActivity {
 
             translate(langs, mainInputText);
 
-            /*for (int i = 0; i < langs.size(); i++){
-                if (i != langs.size() - 1){
-
-                }else{
-                    Handler handler = new Handler();
-                    int finalI = i;
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            Log.i("", "runTranslation: skipping last item");
-                            TextView previousItem = (TextView) findViewById(Integer.parseInt(langs.get(finalI -1)[1]));
-
-                            TextView lastItem = (TextView) findViewById(Integer.parseInt("999999999"));
-                            Log.i("", "runTranslation: last height === " + lastItem.getHeight());
-
-
-                            LinearLayout.LayoutParams langFieldParamsLast = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (previousItem.getHeight() * 0.75) );
-                            langFieldParamsLast.setMargins(16, 32, 16, 16);
-
-                            lastItem.setLayoutParams(langFieldParamsLast);
-
-
-                            Log.i("", "runTranslation: last height added === " + lastItem.getHeight());
-                        }
-                    }, 5000);   //3 seconds
-                }
-
-            }*/
         }
 
     }
