@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 
@@ -41,6 +42,18 @@ public class MainActivity extends AppCompatActivity {
             view = new View(activity);
         }
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void handleIntent(){
+        CharSequence text = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
+        String text_formatted;
+        if (text != null){
+            text_formatted = text.toString();
+            Log.i("INTENT", "onCreate: intent text: " + text_formatted);
+            EditText mainInput = findViewById(R.id.mainInput);
+            mainInput.setText(text_formatted);
+            translate(langs, text_formatted);
+        }
     }
 
     @Override
@@ -154,16 +167,15 @@ public class MainActivity extends AppCompatActivity {
             Log.i("TAG", "onCreate: added views for " + i);
         }
 
-        CharSequence text = getIntent().getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
-        String text_formatted;
-        if (text != null){
-            text_formatted = text.toString();
-            Log.i("INTENT", "onCreate: intent text: " + text_formatted);
-            EditText mainInput = findViewById(R.id.mainInput);
-            mainInput.setText(text_formatted);
-            translate(langs, text_formatted);
-        }
+        Log.i("TAG", "onCreate: running on create");
+        handleIntent();
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.i("TAG", "onNewIntent: running new intent");
+        handleIntent();
     }
 
     public void translate(ArrayList<String[]> target, String text){
