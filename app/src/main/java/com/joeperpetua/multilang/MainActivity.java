@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
         String[] temp3 = {"de", ""};
         langs.add(temp3);
 
-        String[] temp4 = {"", ""};
-        langs.add(temp4);
+        /*String[] temp4 = {"", ""};
+        langs.add(temp4);*/
 
 
 
@@ -110,9 +111,18 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout.LayoutParams langFieldParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         langFieldParams.setMargins(16, 32, 16, 16);
 
+        LinearLayout.LayoutParams toggleParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        toggleParams.setMargins(16, 0, 16, 0);
+
+        LinearLayout.LayoutParams variantParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        variantParams.setMargins(16, 0, 16, 64);
 
         for(int i=0; i < langs.size(); i++)
         {
+            // create vertical container
+            LinearLayout container = new LinearLayout(this);
+            container.setOrientation(LinearLayout.VERTICAL);
+
             // Create LinearLayout
             LinearLayout ll = new LinearLayout(this);
             ll.setOrientation(LinearLayout.HORIZONTAL);
@@ -122,9 +132,10 @@ public class MainActivity extends AppCompatActivity {
             // Create langIndicator TextView
             TextView langIndicator = new TextView(this);
             langIndicator.setLayoutParams(langIndicatorParams);
-            if (i != langs.size() - 1){
+            langIndicator.setText(langs.get(i)[0].toUpperCase() + ": ");
+            /*if (i != langs.size() - 1){
                 langIndicator.setText(langs.get(i)[0].toUpperCase() + ": ");
-            }
+            }*/
             langIndicator.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f);
             ll.addView(langIndicator);
 
@@ -133,18 +144,16 @@ public class MainActivity extends AppCompatActivity {
             langField.setGravity(Gravity.FILL);
 
             int viewIDtoInteger;
+            viewIDtoInteger = View.generateViewId();
 
-            if (i == langs.size() - 1){
+            /*if (i == langs.size() - 1){
                 // generate dynamic ID and store it in langs array
                 viewIDtoInteger = 999999999;
-
                 // langField.setBackgroundColor(Color.parseColor("#000000"));
             }else{
                 // generate dynamic ID and store it in langs array
                 viewIDtoInteger = View.generateViewId();
-
-
-            }
+            }*/
 
             // assign the id to the view
             String viewIDtoString = Integer.toString(viewIDtoInteger);
@@ -158,12 +167,30 @@ public class MainActivity extends AppCompatActivity {
             langField.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f);
             ll.addView(langField);
 
+            SwitchMaterial toggle = new SwitchMaterial(this);
+            toggle.setLayoutParams(toggleParams);
+            toggle.setId(viewIDtoInteger + 333);
+            toggle.setText("Possible variations");
+            toggle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
+            toggle.setVisibility(View.GONE);
+            Log.i("", "onCreate: assigned ID " + viewIDtoInteger + 333);
 
+            TextView variants = new TextView(this);
+            variants.setLayoutParams(variantParams);
+            variants.setId(viewIDtoInteger + 753);
+            variants.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
+            variants.setVisibility(View.GONE);
+            // ll.addView(variants);
             // add constraints
 
 
             //Add to LinearLayout defined in XML
-            lm.addView(ll);
+            container.addView(ll);
+            container.addView(toggle);
+            container.addView(variants);
+
+            lm.addView(container);
+
             Log.i("TAG", "onCreate: added views for " + i);
         }
 
@@ -222,13 +249,103 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
 
-                        fixLastItem();
+                        // fixLastItem();
+                        ProgressBar spinner;
+                        spinner = findViewById(R.id.progressBar);
+                        spinner.setVisibility(View.GONE);
                     }
                     @Override
                     public void onError(ANError error) {
                         Log.e("Api get error", "onError: " + error.getErrorBody() + "\n" + error.getResponse());
                         Toast toast = Toast.makeText(getApplicationContext(), "API error: " + error, Toast.LENGTH_SHORT);
                         toast.show();
+                        Exception exception = new Exception("Error occurred when translating");
+                        exception.printStackTrace();
+                    }
+                });
+    }
+
+    public void dictionary(ArrayList<String[]> langs, String text){
+
+        //Log.i("TAG", "translate: ----" + langs);
+        StringBuilder tl = new StringBuilder();
+        for (int i = 0; i < langs.size(); i++) {
+            // concatenate tl by a comma, except for the last element
+            if (i == langs.size() - 1){
+                tl.append(langs.get(i)[0]);
+            }else {
+                tl.append(langs.get(i)[0]).append(",");
+            }
+        }
+
+        for (int i = 0; i < langs.size(); i++) {
+            // reset switch and variants
+            int tmpToggleID = Integer.parseInt(langs.get(i)[1]) + 333;
+            SwitchMaterial similarToggle = findViewById(tmpToggleID);
+            similarToggle.setChecked(false);
+            similarToggle.setVisibility(View.GONE);
+
+            int tmpTextID = Integer.parseInt(langs.get(i)[1]) + 753;
+            TextView similarText = findViewById(tmpTextID);
+            similarText.setVisibility(View.GONE);
+        }
+
+        //AndroidNetworking.get(url)
+        AndroidNetworking.get("https://apiml.joeper.myds.me/dictionary")
+                .addQueryParameter("tl", tl.toString())
+                .addQueryParameter("q", text)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONArray definitions;
+                        try {
+                            definitions = response.getJSONArray("definitions");
+                            Log.i("TAG", "onResponse: " + definitions);
+
+                            for (int i = 0; i < langs.size(); i++) {
+                                int tmpToggleID = Integer.parseInt(langs.get(i)[1]) + 333;
+                                SwitchMaterial similarToggle = findViewById(tmpToggleID);
+
+                                int tmpTextID = Integer.parseInt(langs.get(i)[1]) + 753;
+                                TextView similarText = findViewById(tmpTextID);
+
+                                for (int j = 0; j < definitions.length(); j++) {
+                                    JSONObject currentDefinition = definitions.getJSONObject(j);
+                                    Log.i("TAG", "onResponse: comparing langs : " + langs.get(i)[0] + " / " + currentDefinition.getString("target"));
+
+                                    if (langs.get(i)[0].equals(currentDefinition.getString("target"))) {
+                                        similarToggle.setVisibility(View.VISIBLE);
+
+                                        similarToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                                            // do something, the isChecked will be true if the switch is in the On position
+                                            if (isChecked){
+                                                similarText.setVisibility(View.VISIBLE);
+                                            }else{
+                                                similarText.setVisibility(View.GONE);
+                                            }
+                                        });
+
+                                        JSONArray results = currentDefinition.getJSONArray("result");
+                                        StringBuilder tmpString = new StringBuilder();
+
+                                        for (int k = 0; k < results.length(); k++) {
+                                            tmpString.append(results.get(k)).append("; ");
+                                        }
+
+                                        similarText.setText(tmpString);
+                                    }
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        // fixLastItem();
+                    }
+                    @Override
+                    public void onError(ANError error) {
+                        Log.e("Api get error", "onError: " + error.getErrorBody() + "\n" + error.getResponse());
                         Exception exception = new Exception("Error occurred when translating");
                         exception.printStackTrace();
                     }
@@ -275,10 +392,11 @@ public class MainActivity extends AppCompatActivity {
 
             hideKeyboard(this);
 
-            Toast toast = Toast.makeText(getApplicationContext(), "Translating...", Toast.LENGTH_SHORT);
-            toast.show();
+            /*Toast toast = Toast.makeText(getApplicationContext(), "Translating...", Toast.LENGTH_SHORT);
+            toast.show();*/
 
             translate(langs, mainInputText);
+            dictionary(langs, mainInputText);
 
         }
 
