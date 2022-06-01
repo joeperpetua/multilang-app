@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/joelp/AndroidStudioProjects/MultiLang/app/src/main/res/drawable/customborder.xml" value="0.24" />
         <entry key="..\:/Users/joelp/AndroidStudioProjects/MultiLang/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/joelp/AndroidStudioProjects/MultiLang/app/src/main/res/xml/network_security_config.xml" value="0.1" />
       </map>

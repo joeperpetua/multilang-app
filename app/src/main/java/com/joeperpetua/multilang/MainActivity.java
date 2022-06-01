@@ -1,6 +1,7 @@
 package com.joeperpetua.multilang;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -122,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
             // create vertical container
             LinearLayout container = new LinearLayout(this);
             container.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            containerParams.setMargins(0, 0, 0, 32);
+            container.setLayoutParams(containerParams);
+            container.setBackground(AppCompatResources.getDrawable(this, R.drawable.customborder));
 
             // Create LinearLayout
             LinearLayout ll = new LinearLayout(this);
@@ -266,8 +271,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void dictionary(ArrayList<String[]> langs, String text){
-
-        //Log.i("TAG", "translate: ----" + langs);
         StringBuilder tl = new StringBuilder();
         for (int i = 0; i < langs.size(); i++) {
             // concatenate tl by a comma, except for the last element
@@ -290,7 +293,6 @@ public class MainActivity extends AppCompatActivity {
             similarText.setVisibility(View.GONE);
         }
 
-        //AndroidNetworking.get(url)
         AndroidNetworking.get("https://apiml.joeper.myds.me/dictionary")
                 .addQueryParameter("tl", tl.toString())
                 .addQueryParameter("q", text)
@@ -340,8 +342,6 @@ public class MainActivity extends AppCompatActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-                        // fixLastItem();
                     }
                     @Override
                     public void onError(ANError error) {
