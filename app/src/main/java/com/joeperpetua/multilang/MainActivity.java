@@ -5,6 +5,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -138,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
             TextView langIndicator = new TextView(this);
             langIndicator.setLayoutParams(langIndicatorParams);
             langIndicator.setText(langs.get(i)[0].toUpperCase() + ": ");
+            langIndicator.setTextColor(Color.parseColor("#b2b7c4"));
             /*if (i != langs.size() - 1){
                 langIndicator.setText(langs.get(i)[0].toUpperCase() + ": ");
             }*/
@@ -169,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
             langField.setLayoutParams(langFieldParams);
             langField.setTextIsSelectable(true);
             langField.setText("");
+            langField.setTextColor(Color.parseColor("#b2b7c4"));
             langField.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f);
             ll.addView(langField);
 
@@ -176,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
             toggle.setLayoutParams(toggleParams);
             toggle.setId(viewIDtoInteger + 333);
             toggle.setText("Possible variations");
+            toggle.setTextColor(Color.parseColor("#b2b7c4"));
             toggle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
             toggle.setVisibility(View.GONE);
             Log.i("", "onCreate: assigned ID " + viewIDtoInteger + 333);
@@ -183,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
             TextView variants = new TextView(this);
             variants.setLayoutParams(variantParams);
             variants.setId(viewIDtoInteger + 753);
+            variants.setTextColor(Color.parseColor("#b2b7c4"));
             variants.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
             variants.setVisibility(View.GONE);
             // ll.addView(variants);
@@ -375,6 +380,11 @@ public class MainActivity extends AppCompatActivity {
             spinner = findViewById(R.id.progressBar);
             spinner.setVisibility(View.GONE);
         }, 1000);   //1 seconds
+    }
+
+    public void clearViews(View view) {
+        EditText mainInput = findViewById(R.id.mainInput);
+        mainInput.setText("");
     }
 
 

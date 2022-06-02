@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#1C1B1F"
     tools:context=".MainActivity">
 
 
@@ -18,41 +19,75 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="50dp"
             android:autofillHints=""
+            android:background="@drawable/customborder"
             android:ems="10"
             android:hint="@string/main_input"
             android:imeOptions="actionSend"
             android:inputType="text"
             android:minHeight="48dp"
+            android:textColor="#B2B7C4"
             android:textColorHint="#78909C"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
         <Button
-            android:id="@+id/translateButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/button"
+            android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="60dp"
-            android:layout_marginEnd="16dp"
-            android:onClick="runTranslation"
-            android:text="@string/translate_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.392"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="8dp"
+            android:background="#00FFFFFF"
+            android:backgroundTint="#00FFFFFF"
+            android:foreground="@android:drawable/ic_delete"
+            android:foregroundTint="#1C1B1F"
+            android:foregroundTintMode="add"
+            android:onClick="clearViews"
+            android:textAlignment="center"
+            android:textColor="#b2b7c4"
+            android:textSize="20sp"
+            app:cornerRadius="100dp"
+            app:iconPadding="0dp"
+            app:layout_constraintEnd_toStartOf="@+id/translateButton"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/mainInput"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+            app:rippleColor="#b2b7c4"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <TextView
             android:id="@+id/langsHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="76dp"
             android:text="@string/translations_header"
+            android:textColor="#B2B7C4"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mainInput" />
+
+        <Button
+            android:id="@+id/translateButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="64dp"
+            android:background="#00FFFFFF"
+            android:backgroundTintMode="multiply"
+            android:foreground="?android:attr/actionModeWebSearchDrawable"
+            android:foregroundTint="#1c1b1f"
+            android:foregroundTintMode="add"
+            android:onClick="runTranslation"
+            android:textColor="#371E73"
+            android:textSize="10sp"
+            app:cornerRadius="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <LinearLayout
             android:id="@+id/linearMain"
@@ -89,6 +124,22 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mainInput" />
+
+        <TextView
+            android:id="@+id/editTextTextPersonName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:minHeight="48dp"
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            android:textColor="#B2B7C4"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!--
 
