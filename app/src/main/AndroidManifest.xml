@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/android_chrome_192x192"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MultiLang">
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
             android:name=".MainActivity"
             android:label="Translate with MultiLang"

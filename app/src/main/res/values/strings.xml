@@ -7,4 +7,8 @@
     <string name="spanish_indicator">ES</string>
     <string name="french_indicator">FR</string>
     <string name="german_indicator">DE</string>
+    <string name="messages_header">Multilang Settings</string>
+    <string name="menu_settings">Edit languages</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
 </resources>

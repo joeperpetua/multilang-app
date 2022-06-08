@@ -8,18 +8,36 @@
     android:background="#1C1B1F"
     tools:context=".MainActivity">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/menu"
+            app:subtitleTextColor="@color/clear_grey"
+            android:theme="@style/Theme.MultiLang"
+            app:popupTheme="@style/Theme.MultiLang"
+            app:itemIconTint="@color/clear_grey"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/clear_grey">
+
+        </androidx.appcompat.widget.Toolbar>
 
         <EditText
             android:id="@+id/mainInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="80dp"
             android:autofillHints=""
             android:background="@drawable/customborder"
             android:ems="10"
@@ -33,11 +51,31 @@
             app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
 
         <Button
+            android:id="@+id/translateButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="80dp"
+            android:layout_marginEnd="64dp"
+            android:background="#00FFFFFF"
+            android:backgroundTintMode="multiply"
+            android:foreground="?android:attr/actionModeWebSearchDrawable"
+            android:foregroundTint="#1c1b1f"
+            android:foregroundTintMode="add"
+            android:onClick="runTranslation"
+            android:textColor="#371E73"
+            android:textSize="10sp"
+            app:cornerRadius="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <Button
             android:id="@+id/button"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="80dp"
             android:layout_marginEnd="8dp"
             android:background="#00FFFFFF"
             android:backgroundTint="#00FFFFFF"
@@ -68,26 +106,6 @@
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mainInput" />
-
-        <Button
-            android:id="@+id/translateButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="64dp"
-            android:background="#00FFFFFF"
-            android:backgroundTintMode="multiply"
-            android:foreground="?android:attr/actionModeWebSearchDrawable"
-            android:foregroundTint="#1c1b1f"
-            android:foregroundTintMode="add"
-            android:onClick="runTranslation"
-            android:textColor="#371E73"
-            android:textSize="10sp"
-            app:cornerRadius="100dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/button"
-            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName"
-            tools:ignore="SpeakableTextPresentCheck" />
 
         <LinearLayout
             android:id="@+id/linearMain"
@@ -131,12 +149,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:ems="10"
-            android:inputType="textPersonName"
             android:minHeight="48dp"
             android:text="@string/app_name"
             android:textAlignment="center"
             android:textColor="#B2B7C4"
             android:textSize="34sp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
