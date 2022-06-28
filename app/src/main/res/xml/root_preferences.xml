@@ -1,0 +1,19 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/translations_header">
+        <MultiSelectListPreference
+            android:defaultValue="@array/languages"
+            android:entries="@array/languages"
+            android:entryValues="@array/languages"
+            android:key="multi_select_list_preference_1"
+            android:title="Multi select list preference" />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/languages"
+            android:entryValues="@array/languages"
+            android:key="list_preference_1"
+            android:title="List preference" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
