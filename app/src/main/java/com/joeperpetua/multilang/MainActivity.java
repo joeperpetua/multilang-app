@@ -1,10 +1,8 @@
 package com.joeperpetua.multilang;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -52,14 +50,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.settings_btn:
-                Intent i = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(i);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.settings_btn) {
+            Intent i = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(i);
         }
+        return true;
     }
 
     public static void hideKeyboard(Activity activity) {
@@ -170,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             // Create langIndicator TextView
             TextView langIndicator = new TextView(this);
             langIndicator.setLayoutParams(langIndicatorParams);
-            langIndicator.setText(langs.get(i)[0].toUpperCase() + ": ");
+            langIndicator.setText(getString(R.string.lang_indicator, langs.get(i)[0].toUpperCase()));
             langIndicator.setTextColor(Color.parseColor("#b2b7c4"));
             /*if (i != langs.size() - 1){
                 langIndicator.setText(langs.get(i)[0].toUpperCase() + ": ");
@@ -210,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             SwitchMaterial toggle = new SwitchMaterial(this);
             toggle.setLayoutParams(toggleParams);
             toggle.setId(viewIDtoInteger + 333);
-            toggle.setText("Possible variations");
+            toggle.setText(R.string.possible_variations);
             toggle.setTextColor(Color.parseColor("#b2b7c4"));
             toggle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16f);
             toggle.setVisibility(View.GONE);
