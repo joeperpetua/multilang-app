@@ -3,9 +3,11 @@ package com.joeperpetua.multilang;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,10 +36,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "Main TAG";
     public ArrayList<String[]> langs = new ArrayList<>();
 
     @Override
@@ -90,6 +94,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         // setTitle("");
         setSupportActionBar(myToolbar);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Map<String, ?> languagesMap = sharedPreferences.getAll();
+        Object languagesObject = languagesMap.get("languages_list");
+        String languagesString = languagesObject.toString();
+
+
+        Log.i(TAG, "onCreate: " + "" + " - " + languagesObject.getClass());
 
 
 
