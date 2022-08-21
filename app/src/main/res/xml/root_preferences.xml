@@ -6,7 +6,7 @@
         android:showDividers="middle"
         app:title="@string/settings_languages">
         <MultiSelectListPreference
-            android:defaultValue="@array/languages"
+            android:defaultValue="@array/empty_array"
             android:entries="@array/languages"
             android:entryValues="@array/languages"
             android:key="languages_list"

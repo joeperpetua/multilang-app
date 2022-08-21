@@ -36,6 +36,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -97,19 +99,24 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         Map<String, ?> languagesMap = sharedPreferences.getAll();
-        Object languagesObject = languagesMap.get("languages_list");
-        String languagesString = languagesObject.toString();
+        HashSet<?> languagesObject = (HashSet<?>) languagesMap.get("languages_list");
 
+        if (languagesObject != null) {
+            Iterator<?> languages = languagesObject.iterator();
 
-        Log.i(TAG, "onCreate: " + "" + " - " + languagesObject.getClass());
-
-
+            while(languages.hasNext())
+            {
+                String[] temp = {languages.next().toString(), ""};
+                langs.add(temp);
+                Log.i(TAG, "onCreate: " + "" + " - " + langs);
+            }
+        }
 
         // to parse:
         // language: langs.get(index)[0]
         // id: langs.get(index)[1]
 
-        String[] temp = {"en", ""};
+        /*String[] temp = {"en", ""};
         langs.add(temp);
 
         String[] temp1 = {"es", ""};
@@ -121,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         String[] temp3 = {"de", ""};
         langs.add(temp3);
 
-        /*String[] temp4 = {"", ""};
+        String[] temp4 = {"", ""};
         langs.add(temp4);*/
 
 
@@ -158,6 +165,33 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout.LayoutParams variantParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         variantParams.setMargins(16, 0, 16, 64);
 
+        if (langs.size() == 0)
+        {
+            // create vertical container
+            LinearLayout container = new LinearLayout(this);
+            container.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            containerParams.setMargins(0, 0, 0, 32);
+            container.setLayoutParams(containerParams);
+            container.setBackground(AppCompatResources.getDrawable(this, R.drawable.customborder));
+
+            // Create LinearLayout
+            LinearLayout ll = new LinearLayout(this);
+            ll.setOrientation(LinearLayout.HORIZONTAL);
+            //ll.setGravity(Gravity.FILL);
+            ll.setBaselineAligned(false);
+
+            // Create Setup TextView
+            TextView setupMessage = new TextView(this);
+            setupMessage.setLayoutParams(langIndicatorParams);
+            setupMessage.setText(getString(R.string.setup_message));
+            setupMessage.setTextColor(Color.parseColor("#b2b7c4"));
+
+            ll.addView(setupMessage);
+            container.addView(ll);
+            lm.addView(container);
+        }
+
         for(int i=0; i < langs.size(); i++)
         {
             // create vertical container
@@ -177,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             // Create langIndicator TextView
             TextView langIndicator = new TextView(this);
             langIndicator.setLayoutParams(langIndicatorParams);
-            langIndicator.setText(getString(R.string.lang_indicator, langs.get(i)[0].toUpperCase()));
+            langIndicator.setText(getString(R.string.lang_indicator, langs.get(i)[0]));
             langIndicator.setTextColor(Color.parseColor("#b2b7c4"));
             /*if (i != langs.size() - 1){
                 langIndicator.setText(langs.get(i)[0].toUpperCase() + ": ");
@@ -292,6 +326,7 @@ public class MainActivity extends AppCompatActivity {
                                 JSONObject tmp = results.getJSONObject(i);
                                 TextView transField = findViewById(Integer.parseInt(target.get(i)[1]));
                                 transField.setText(tmp.getString("result"));
+                                Log.i(TAG, "onResponse: Assigning " + tmp.getString("result") + " to lang: " + target.get(i)[0]);
                             }
 
                         } catch (JSONException e) {
@@ -424,6 +459,11 @@ public class MainActivity extends AppCompatActivity {
     public void clearViews(View view) {
         EditText mainInput = findViewById(R.id.mainInput);
         mainInput.setText("");
+        for (int i = 0; i < langs.size(); i++)
+        {
+            TextView temp = findViewById(Integer.parseInt(langs.get(i)[1]));
+            temp.setText("");
+        }
     }
 
 

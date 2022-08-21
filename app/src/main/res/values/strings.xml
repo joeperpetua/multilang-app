@@ -31,4 +31,5 @@
     <string name="settings_languages_button">Choose languages</string>
     <string name="settings_save">Go back</string>
     <string name="settings_cancel">Dismiss changes</string>
+    <string name="setup_message">Click on the top-right three-dotted button and go to Settings to add target languages.</string>
 </resources>
