@@ -312,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
         //AndroidNetworking.get(url)
         AndroidNetworking.get("https://apiml.joeper.myds.me/translate")
                 .addQueryParameter("tl", tl.toString())
+                .addQueryParameter("sl", "auto")
                 .addQueryParameter("q", text)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
